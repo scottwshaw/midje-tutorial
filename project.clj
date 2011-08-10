@@ -4,5 +4,3 @@
   :dev-dependencies [[lein-midje "1.0.3"]
                      [midje "1.2.0"]
                      [swank-clojure "1.3.2"]])
-
-
