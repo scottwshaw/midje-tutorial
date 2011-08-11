@@ -116,23 +116,17 @@
               
 ;;; Setup, teardown, etc.
 
-;;; placeholder, would be a good place to do something concurrent
-  
+(let [mycount (agent 0)]
+  (send mycount #(+ % 1))
+  (await mycount)
+  (fact @mycount => 1))
 
-(def mycount (agent 0))
+;;;  The above is the same as 
 
-(send mycount #(+ % 1))
-
-(println @mycount)
-
-
-
-
-
-
-
-
-
+(against-background [(around :facts (let [mycount (agent 0)] ?form))
+                     (before :checks (do (send mycount #(+ 1 %)) (await mycount)))]
+  (fact @mycount => 1))
 
   
+
 
