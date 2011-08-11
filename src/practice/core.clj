@@ -75,6 +75,56 @@
 ;;; we can fix it with 
 (fact [1 2 3 4] => (contains [1 3] :gaps-ok))
 
+;;; same goes for maps
+(fact {:a 1 :b 2 :c 3} => (contains {:b 2}))
+
+;;; can be more restrictive
+(fact {:a 1 :b 2 :c 3} => (just {:b 2}))   (note-expected-failure)
+
+;;; and can be specific about contents but relaxed about order
+(fact {:a 1 :b 2 :c 3} => (just {:b 2 :a 1 :c 3} :in-any-order))
+
+
+;;; can arrange facts in tables
+(tabular
+ (fact (even? ?int) => ?expected)
+ :where
+ | ?int  | ?expected
+ | 1     | falsey 
+ | 2     | truthy
+ | 33    | falsey 
+ | 154   | truthy)
+
+
+;;; Metaconstants
+;;; For me, enhance the declarative nature of Midje
+;;; a way to state constraints on the arguments to facts or prerequisites (i.e. the mocking function)
+;;;
+
+(unfinished split-at-commas trim-last-digit)
+
+(defn split-and-trim-last [input-string]
+  (map trim-last-digit (split-at-commas input-string)))
+
+(let [expected-result ["a-word" "another-word"]]
+  (fact
+    (split-and-trim-last ...input-string...) => expected-result
+    (provided
+      (split-at-commas ...input-string...) => [...result1... ...result2...]
+      (trim-last-digit ...result1...) => "a-word"
+      (trim-last-digit ...result2...) => "another-word")))
+              
+;;; Setup, teardown, etc.
+
+;;; placeholder, would be a good place to do something concurrent
+  
+
+(def mycount (agent 0))
+
+(send mycount #(+ % 1))
+
+(println @mycount)
+
 
 
 
